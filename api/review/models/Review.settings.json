@@ -1,0 +1,49 @@
+{
+  "connection": "default",
+  "collectionName": "review",
+  "info": {
+    "name": "review",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "author": {
+      "type": "string",
+      "required": true
+    },
+    "positive": {
+      "type": "boolean",
+      "required": true
+    },
+    "date": {
+      "type": "date"
+    },
+    "content": {
+      "type": "text",
+      "minLength": 10,
+      "required": true,
+      "maxLength": 300
+    },
+    "work": {
+      "type": "string"
+    },
+    "photos": {
+      "collection": "file",
+      "via": "related",
+      "plugin": "upload"
+    },
+    "moderated": {
+      "required": true,
+      "type": "boolean"
+    },
+    "company": {
+      "model": "company",
+      "via": "reviews"
+    }
+  }
+}

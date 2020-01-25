@@ -1,0 +1,9 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/rules",
+      "handler": "Rule.index"
+    }
+  ]
+}

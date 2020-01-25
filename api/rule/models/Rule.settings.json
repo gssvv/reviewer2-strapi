@@ -1,0 +1,22 @@
+{
+  "connection": "default",
+  "collectionName": "rule",
+  "info": {
+    "name": "rule",
+    "description": "Правила сайта"
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "content": {
+      "type": "richtext"
+    },
+    "desc": {
+      "type": "text"
+    }
+  }
+}

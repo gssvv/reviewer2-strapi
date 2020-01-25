@@ -1,0 +1,69 @@
+{
+  "connection": "default",
+  "collectionName": "company",
+  "info": {
+    "name": "company",
+    "description": "Компания-строитель"
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "title": {
+      "maxLength": 50,
+      "required": true,
+      "type": "string"
+    },
+    "avatar": {
+      "model": "file",
+      "via": "related",
+      "plugin": "upload"
+    },
+    "companyId": {
+      "type": "integer",
+      "required": true,
+      "unique": true
+    },
+    "dateAdded": {
+      "required": true,
+      "type": "date"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "desc": {
+      "type": "text",
+      "maxLength": 500,
+      "required": true,
+      "minLength": 50
+    },
+    "pricing": {
+      "group": "price",
+      "min": 3,
+      "repeatable": true,
+      "max": 3,
+      "type": "group"
+    },
+    "moderated": {
+      "required": true,
+      "type": "boolean"
+    },
+    "email": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "integer",
+      "default": "0"
+    },
+    "reviews": {
+      "collection": "review",
+      "via": "company"
+    }
+  }
+}

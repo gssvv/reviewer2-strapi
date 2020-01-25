@@ -1,0 +1,27 @@
+{
+  "connection": "default",
+  "collectionName": "about",
+  "info": {
+    "name": "about",
+    "description": "Контетнт для страницы \"о проекте\""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "content": {
+      "type": "richtext",
+      "required": true
+    },
+    "blocks": {
+      "group": "about_block",
+      "repeatable": true,
+      "type": "group",
+      "min": 3,
+      "max": 3
+    }
+  }
+}

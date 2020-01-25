@@ -1,0 +1,16 @@
+{
+  "info": {
+    "name": "price",
+    "description": "Информация о цене"
+  },
+  "connection": "default",
+  "collectionName": "groups_prices",
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "value": {
+      "type": "integer"
+    }
+  }
+}

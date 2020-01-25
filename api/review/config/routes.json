@@ -1,0 +1,14 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/reviews/:id",
+      "handler": "Review.index"
+    },
+    {
+      "method": "POST",
+      "path": "/reviews",
+      "handler": "Review.create"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/contacts",
+      "handler": "Contact.index"
+    }
+  ]
+}

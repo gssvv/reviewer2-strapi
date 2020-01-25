@@ -1,0 +1,22 @@
+{
+  "info": {
+    "name": "aboutBlock",
+    "description": "Один из трех блоков на странице \"О нас\""
+  },
+  "connection": "default",
+  "collectionName": "groups_about_blocks",
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "content": {
+      "type": "text"
+    },
+    "linkText": {
+      "type": "string"
+    },
+    "linkUrl": {
+      "type": "string"
+    }
+  }
+}

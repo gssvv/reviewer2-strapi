@@ -1,0 +1,20 @@
+{
+  "connection": "default",
+  "collectionName": "announces",
+  "info": {
+    "name": "announce",
+    "description": "Объявления на главной странице"
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "content": {
+      "group": "about_block",
+      "type": "group"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/companies",
+      "handler": "Company.index"
+    },
+    {
+      "method": "GET",
+      "path": "/companies/:id",
+      "handler": "Company.findOne"
+    },
+    {
+      "method": "POST",
+      "path": "/companies",
+      "handler": "Company.create"
+    }
+  ]
+}
