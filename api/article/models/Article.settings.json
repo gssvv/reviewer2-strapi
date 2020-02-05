@@ -1,0 +1,65 @@
+{
+  "connection": "default",
+  "collectionName": "article",
+  "info": {
+    "name": "article",
+    "description": ""
+  },
+  "options": {
+    "timestamps": [
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  "attributes": {
+    "title": {
+      "maxLength": 150,
+      "required": true,
+      "type": "string",
+      "minLength": 5
+    },
+    "preview": {
+      "model": "file",
+      "via": "related",
+      "plugin": "upload",
+      "required": true
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "published": {
+      "type": "boolean"
+    },
+    "content": {
+      "required": true,
+      "type": "richtext"
+    },
+    "desc": {
+      "maxLength": 150,
+      "required": true,
+      "minLength": 10,
+      "type": "text"
+    },
+    "articleLink": {
+      "maxLength": 100,
+      "required": true,
+      "unique": true,
+      "minLength": 5,
+      "type": "string"
+    },
+    "seoTitle": {
+      "type": "string",
+      "maxLength": 70,
+      "required": true,
+      "minLength": 5
+    },
+    "tags": {
+      "type": "string"
+    },
+    "comment": {
+      "maxLength": 150,
+      "type": "string"
+    }
+  }
+}

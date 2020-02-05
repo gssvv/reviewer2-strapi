@@ -1,0 +1,14 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/articles",
+      "handler": "Article.index"
+    },
+    {
+      "method": "GET",
+      "path": "/articles/:id",
+      "handler": "Article.findOne"
+    }
+  ]
+}
