@@ -6,6 +6,29 @@ const { parseMultipartData } = require('strapi-utils')
  * Read the documentation () to implement custom controller functions
  */
 
+function getReviewsStats(reviews, total) {
+  let stats = Array(
+    { total: 0, percent: '0%' },
+    { total: 0, percent: '0%' },
+    { total: 0, percent: '0%' },
+    { total: 0, percent: '0%' },
+    { total: 0, percent: '0%' }
+  )
+
+  reviews.forEach((el, index) => {
+    el.rate = el.rate || 3
+    stats[el.rate - 1].total++
+  })
+  if (total)
+    stats.forEach((el, index) => {
+      console.log(((100 / total) * el.total).toFixed(0))
+
+      stats[index].percent = ((100 / total) * el.total).toFixed(0) + '%'
+    })
+
+  return stats.reverse()
+}
+
 module.exports = {
   index: async ctx => {
     let neededValues = [
@@ -14,33 +37,74 @@ module.exports = {
       'companyId',
       'rating',
       'pricing',
-      'address'
+      'address',
+      'phone',
+      'email',
+      'reviews',
+      'avgRate',
+      'reviewsTotal'
     ]
+
+    let customValues = [
+      'price1_gte',
+      'price1_lte',
+      'price2_gte',
+      'price2_lte',
+      'price3_gte',
+      'price3_lte',
+      '_start'
+      // SET PAGINATION
+    ]
+
+    let customQuery = _pick(ctx.query, customValues)
+    for (let val of customValues) delete ctx.query[val]
 
     let data = await strapi.services.company.find({
       ...ctx.query,
+      _limit: 9999,
       _sort: 'rating:ASC',
       moderated: true
     })
+
+    data = data.filter(el => {
+      for (let i = 1; i <= 3; i++) {
+        if (
+          (customQuery[`price${i}_gte`] &&
+            el.pricing[i - 1].value < customQuery[`price${i}_gte`]) ||
+          (customQuery[`price${i}_lte`] &&
+            el.pricing[i - 1].value > customQuery[`price${i}_lte`])
+        )
+          return false
+      }
+      return true
+    })
+
     let result = []
 
     for (let index in data) {
-      let reviews = data[index].reviews.filter(e => e.moderated).length
-      let reviewsPos = data[index].reviews.filter(
-        e => e.positive && e.moderated
-      ).length
+      let reviews = data[index].reviews.filter(e => e.moderated)
 
       result[index] = _pick(data[index], neededValues)
 
       result[index].reviews = reviews
-      result[index].reviewsNeg = reviews - reviewsPos
-      result[index].reviewsPos = reviewsPos
+        .filter(e => e.photos && e.photos[0])
+        .slice(0, 2)
     }
 
-    ctx.send(result)
+    let pagination = {
+      length: result.length
+    }
+
+    if (!customQuery._start) customQuery._start = 0
+
+    result = result.slice(
+      Number(customQuery._start),
+      Number(customQuery._start) + 10
+    )
+
+    ctx.send({ list: result, pagination })
   },
   findOne: async ctx => {
-    let maxReviews = 20
     let neededValues = [
       'avatar',
       'title',
@@ -52,6 +116,8 @@ module.exports = {
       'phone',
       'pricing',
       'reviews',
+      'avgRate',
+      'reviewsTotal',
       'desc',
       'id'
     ]
@@ -74,20 +140,13 @@ module.exports = {
       return new Date(second.date) - new Date(first.date)
     })
 
-    // TODO: Exclude dates from reviews (here and everywhere)
-
+    data.reviewsStats = getReviewsStats(data.reviews, data.reviewsTotal)
     // counting reviews
-    let reviewsCount = data.reviews.length
-    let reviewsCountPos = data.reviews.filter(e => e.positive).length
-
-    data.reviewsCount = reviewsCount
-    data.reviewsCountNeg = reviewsCount - reviewsCountPos
-    data.reviewsCountPos = reviewsCountPos
-
-    data.reviews.length =
-      data.reviews.length > maxReviews ? maxReviews : data.reviews.length
-
     data.reviews = data.reviews.slice(0, 9)
+
+    data.reviewsPhotos = data.reviews
+      .filter(e => e.photos && e.photos[0])
+      .slice(0, 4)
 
     ctx.send(data)
   },
@@ -116,15 +175,7 @@ module.exports = {
     }
 
     try {
-      const { files } = parseMultipartData(ctx)
-
-      if (files.avatar.size > 1048576) {
-        ctx.response.status = 403
-        ctx.response.body = { message: 'Размер файла не должен привышать 1МБ' }
-        return
-      }
-
-      await strapi.services.company.create(newCompany, { files })
+      await strapi.services.company.create(newCompany)
     } catch (e) {
       console.log(e.message)
 

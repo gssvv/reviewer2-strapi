@@ -15,9 +15,7 @@ module.exports = {
       return
     }
 
-    let entity = _pick(entities[0], ['content', 'blocks'])
-
-    entity.content = entity.content.replace(/\n/g, '<br>')
+    let entity = _pick(entities[0], ['title', 'blocks'])
 
     return entity
   }

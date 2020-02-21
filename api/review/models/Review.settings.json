@@ -17,8 +17,7 @@
       "required": true
     },
     "positive": {
-      "type": "boolean",
-      "required": true
+      "type": "boolean"
     },
     "date": {
       "type": "date"
@@ -29,9 +28,6 @@
       "required": true,
       "maxLength": 300
     },
-    "work": {
-      "type": "string"
-    },
     "photos": {
       "collection": "file",
       "via": "related",
@@ -40,6 +36,15 @@
     "moderated": {
       "required": true,
       "type": "boolean"
+    },
+    "rate": {
+      "type": "integer",
+      "max": 5,
+      "required": true,
+      "min": 1
+    },
+    "summary": {
+      "type": "string"
     },
     "company": {
       "model": "company",

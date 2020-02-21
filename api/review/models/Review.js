@@ -11,30 +11,40 @@ let updateRating = async (model, result) => {
       moderated: true
     })
 
+    const reducer = (red, el) => {
+      let val = 0
+      if (el.rate) {
+        val = el.rate > 3 ? 1 : el.rate < 3 ? -1 : 0
+      } else {
+        val = el.positive ? 1 : -1
+      }
+
+      return red + val
+    }
+
     allCompanies.sort((first, second) => {
-      let reviewsCountPosFirst = first.reviews.filter(
-        e => e.positive && e.moderated
-      ).length
-      let reviewsCountFirst = first.reviews.filter(e => e.moderated).length
-      let ratingFirst =
-        reviewsCountPosFirst - reviewsCountFirst + reviewsCountPosFirst
-
-      let reviewsCountPosSecond = second.reviews.filter(
-        e => e.positive && e.moderated
-      ).length
-      let reviewsCountSecond = second.reviews.filter(e => e.moderated).length
-
-      let ratingSecond =
-        reviewsCountPosSecond - reviewsCountSecond + reviewsCountPosSecond
+      let ratingFirst = first.reviews.reduce(reducer, 0)
+      let ratingSecond = second.reviews.reduce(reducer, 0)
 
       return ratingSecond - ratingFirst
     })
 
     for (let index in allCompanies) {
+      let totalRate = allCompanies[index].reviews.reduce(
+        (red, val) => red + (val.rate || 3),
+        0
+      )
+      let avgRate = totalRate / (allCompanies[index].reviews.length || 1)
+
+      let reviewsTotal = allCompanies[index].reviews.filter(e => e.moderated)
+        .length
+
       await strapi.services.company.update(
         { companyId: allCompanies[index].companyId },
         {
-          rating: Number(index) + 1
+          rating: Number(index) + 1,
+          avgRate: avgRate || 0,
+          reviewsTotal
         }
       )
     }
@@ -42,12 +52,12 @@ let updateRating = async (model, result) => {
 }
 
 module.exports = {
+  afterSave: updateRating,
+  afterDestroy: updateRating,
+  afterUpdate: updateRating
   // Before saving a value.
   // Fired before an `insert` or `update` query.
   // beforeSave: async (model) => {},
-
-  afterUpdate: updateRating,
-  afterDestroy: updateRating
 
   // After saving a value.
   // Fired after an `insert` or `update` query.

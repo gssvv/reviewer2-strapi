@@ -46,10 +46,10 @@ module.exports = {
     let newReview = {
       ..._pick(neededValues, [
         'author',
-        'work',
+        'summary',
         'content',
         'photos',
-        'positive'
+        'rate'
       ]),
       company: companyId,
       date: new Date().toISOString(),

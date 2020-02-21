@@ -12,16 +12,13 @@
     ]
   },
   "attributes": {
-    "content": {
-      "type": "richtext",
-      "required": true
-    },
     "blocks": {
       "group": "about_block",
       "repeatable": true,
-      "type": "group",
-      "min": 3,
-      "max": 3
+      "type": "group"
+    },
+    "title": {
+      "type": "string"
     }
   }
 }

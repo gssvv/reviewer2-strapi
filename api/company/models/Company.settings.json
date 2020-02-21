@@ -61,6 +61,17 @@
       "type": "integer",
       "default": "0"
     },
+    "avgRate": {
+      "type": "float",
+      "default": "1",
+      "max": 5,
+      "required": true
+    },
+    "reviewsTotal": {
+      "type": "integer",
+      "default": "0",
+      "required": true
+    },
     "reviews": {
       "collection": "review",
       "via": "company"
