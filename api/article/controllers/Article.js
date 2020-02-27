@@ -12,21 +12,21 @@ module.exports = {
   index: async ctx => {
     let entities = await strapi.services.article.find({
       ...ctx.query,
+      _limit: 9999,
       published: true,
       _sort: 'date:ASC'
     })
 
-    return entities.map(entity => {
+    let result = { pagination: { length: entities.length } }
+
+    entities.length = ctx.query._limit || 9
+
+    result.articles = entities.map(entity => {
       let result = sanitizeEntity(entity, { model: strapi.models.article })
-      return _pick(result, [
-        'title',
-        'desc',
-        'preview',
-        'date',
-        'articleLink',
-        'tags'
-      ])
+      return _pick(result, ['title', 'desc', 'date', 'articleLink'])
     })
+
+    return result
   },
   findOne: async ctx => {
     console.log(ctx.params.id)
