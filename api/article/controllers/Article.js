@@ -19,7 +19,7 @@ module.exports = {
 
     let result = { pagination: { length: entities.length } }
 
-    entities.length = ctx.query._limit || 9
+    entities.length = entities.length > 9 ? 9 : entities.length
 
     result.articles = entities.map(entity => {
       let result = sanitizeEntity(entity, { model: strapi.models.article })
