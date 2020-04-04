@@ -9,6 +9,11 @@
       "method": "POST",
       "path": "/reviews",
       "handler": "Review.create"
+    },
+    {
+      "method": "POST",
+      "path": "/reviews/load",
+      "handler": "Review.ccreate"
     }
   ]
 }

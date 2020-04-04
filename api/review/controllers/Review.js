@@ -79,5 +79,38 @@ module.exports = {
     }
 
     ctx.send({ message: 'Отзыв отправлен на модерацию.' })
-  }
+  },
+  ccreate: async ctx => {
+    let neededValues = ctx.request.body
+    let companyId = neededValues.company
+
+    let company = await strapi.query('company').findOne({
+      companyId
+    })
+
+    if(!company.id) return
+     
+    let newReview = {
+      ..._pick(neededValues, [
+        'author',
+        'work',
+        'content',
+        'positive',
+        'date'
+      ]),
+      company: company.id,
+      moderated: true
+    }
+    try {
+      await strapi.services.review.create(newReview)
+    } catch (e) {
+      console.log(e.message)
+
+      ctx.response.status = 403
+      ctx.response.body = { message: e._message }
+      return
+    }
+
+    ctx.send({ message: 'Отзыв отправлен на модерацию.' })
+  },
 }
