@@ -13,7 +13,7 @@
     {
       "method": "POST",
       "path": "/reviews/load",
-      "handler": "Review.ccreate"
+      "handler": "Review.load"
     }
   ]
 }

@@ -14,6 +14,11 @@
       "method": "POST",
       "path": "/companies",
       "handler": "Company.create"
+    },
+    {
+      "method": "POST",
+      "path": "/companies/load",
+      "handler": "Company.load"
     }
   ]
 }

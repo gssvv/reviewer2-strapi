@@ -134,5 +134,55 @@ module.exports = {
     }
 
     ctx.send({ message: 'Информация о компании отправлена на модерацию.' })
+  },
+  load: async ctx => {
+    let neededValues = JSON.parse(ctx.request.body.data)
+    neededValues.companyId = Number(neededValues.companyId)
+
+    let company = await strapi.query('company').findOne({
+      companyId: neededValues.companyId
+    })
+
+    if(company) {
+      ctx.response.status = 403
+      ctx.response.body = { 
+        error: `Company with such companyId already exists`
+      }
+      return
+    }
+
+    let newCompany = {
+      ..._pick(neededValues, [
+        'desc',
+        'title',
+        'phone',
+        'address',
+        'email',
+        'pricing',
+        'companyId',
+        "dateAdded",
+      ]),
+      moderated: true
+    }
+
+    try {
+      const { files } = parseMultipartData(ctx)
+
+      if (files.avatar.size > 1048576) {
+        ctx.response.status = 403
+        ctx.response.body = { message: 'Размер файла не должен привышать 1МБ' }
+        return
+      }
+
+      await strapi.services.company.create(newCompany, { files })
+    } catch (e) {
+      console.log(e.message)
+
+      ctx.response.status = 403
+      ctx.response.body = { message: e._message }
+      return
+    }
+
+    ctx.send({ message: 'Компания добавлена в базу данных.' })
   }
 }

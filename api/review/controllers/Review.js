@@ -1,6 +1,7 @@
 'use strict'
 const _pick = require('lodash.pick')
 const { parseMultipartData } = require('strapi-utils')
+const ObjectID = require('mongodb').ObjectID
 
 /**
  * Read the documentation () to implement custom controller functions
@@ -80,15 +81,36 @@ module.exports = {
 
     ctx.send({ message: 'Отзыв отправлен на модерацию.' })
   },
-  ccreate: async ctx => {
+  load: async ctx => {
     let neededValues = ctx.request.body
     let companyId = neededValues.company
 
     let company = await strapi.query('company').findOne({
-      companyId
+      companyId: Number(companyId)
     })
 
-    if(!company.id) return
+    if(!company || !company.id) {
+      ctx.response.status = 403
+      ctx.response.body = { 
+        error: `No such company: ${companyId}`
+      }
+      return
+    }
+    
+
+    let review = await strapi.query('review').findOne({
+      content: neededValues.content,
+      company: ObjectID(company.id)
+    })
+
+    if(review) {
+      ctx.response.status = 403
+      ctx.response.body = { 
+        error: `Review with such content for this company (${companyId}) already exists`,
+        content: neededValues.content 
+      }
+      return
+    }
      
     let newReview = {
       ..._pick(neededValues, [
@@ -111,6 +133,6 @@ module.exports = {
       return
     }
 
-    ctx.send({ message: 'Отзыв отправлен на модерацию.' })
+    ctx.send({ message: 'Отзыв добавлен в базу данных.' })
   },
 }
