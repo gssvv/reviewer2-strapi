@@ -1,15 +1,17 @@
 const axios = require('axios')
-// const reviews = require('./10-20--18-1.json')
 const companies = require('./rev2/companies.json')
 const FormData = require('form-data');
 const fs = require('fs');
+const PORT = process.env.PORT
+
+console.log(`PORT=${PORT}`);
 
 const reviews = []
 
 async function loadCompanies() {
   console.log('Loading Companies...');
 
-  companies.forEach(async company => {
+  for(let company of companies) {
     let formData = new FormData()
     const file = await fs.createReadStream(`${__dirname}/rev2/logos/${company.companyId}.png`)
     formData.append('data', JSON.stringify(company))
@@ -19,11 +21,15 @@ async function loadCompanies() {
       file.name
     )
     
-    axios.post('http://localhost:1337/companies/load', formData, {headers: {
+    try {
+      const res = await axios.post(`http://localhost:${PORT}/companies/load`, formData, {headers: {
       'Content-Type': `multipart/form-data; boundary=${formData._boundary}`
-    }}).then(res => console.log(res.data))
-      .catch(err => console.log(company.companyId, err.response ? err.response.status : err.message, err.response ? err.response.data : null))
-  })
+      }})
+      console.log(res.data)
+    } catch(err) {
+      console.log(company.companyId, err.response ? err.response.status : err.message, err.response ? err.response.data : null)
+    }
+  }
 }
 
 async function loadReviews() {
@@ -37,32 +43,24 @@ async function loadReviews() {
       
       reviews.push(...list)
     });
-  
-    await reviews.forEach(async (el, index) => {
+
+    for(let index in reviews) {
+      console.log('Waiting...');
       try {
-        const res = await axios.post('http://localhost:1337/reviews/load', el)
+        const res = await axios.post(`http://localhost:${PORT}/reviews/load`, reviews[index])
         console.log(res.data)
-        console.log(`Loaded ${index + 1}/${reviews.length}`);
+        console.log(`Loaded ${Number(index) + 1}/${reviews.length}`);
       } catch (err) {
-        console.log(err.response.status, err.response.data)
-        console.log(`Loaded ${index + 1}/${reviews.length}`);
+        console.log(err.response ? err.response.status : err.message, err.response ? err.response.data : null)
+        console.log(`Loaded ${Number(index) + 1}/${reviews.length}`);
       }
-    })
-    
+    }    
   })
 }
 
 (
   async function start() {
+    await loadCompanies()
     await loadReviews()
-    // await loadCompanies()
   }
 )()
-
-
-
-// reviews.forEach(async el => {
-//   axios.post('http://localhost:1337/reviews/load', el)
-//     .then(res => console.log(res))
-//     .catch(err => console.log(err.response.status, err.response.data));
-// })
